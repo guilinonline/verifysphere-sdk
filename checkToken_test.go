@@ -3,7 +3,7 @@ package verifysphere_sdk_test
 import (
 	"encoding/json"
 	"fmt"
-	"gitee.com/guilin180/verifysphere-sdk"
+	"github.com/guilinonline/verifysphere-sdk"
 	"testing"
 )
 
@@ -27,10 +27,10 @@ func TestLogin(t *testing.T) {
 		Context: string(ctxJSON),
 	}
 	token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJ1LTYyNmU1NTI5YmY1ODAiLCJVc2VybmFtZSI6InRlc3QxIiwiVXNlclR5cGUiOiJub3JtYWwiLCJBdWRpZW5jZSI6InNlbGYiLCJpc3MiOiJWZXJpZnlTcGhlcmUiLCJzdWIiOiJ0ZXN0MSIsImV4cCI6MTY5MTA2MDI5NSwibmJmIjoxNjkxMDMxNDk1LCJpYXQiOjE2OTEwMzE0OTV9.pbA9JjH9djYmf-5gzXVhp3YtwM99z73YnnojWeGx6so"
-	data, err := client.CheckToken(vp, token)
+	data, code, err := client.CheckToken(vp, token)
 	if err != nil {
 		t.Errorf("check failed for  %s", err.Error())
 	}
-	fmt.Println(string(data))
+	fmt.Println(string(data), code)
 
 }
