@@ -4,44 +4,51 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
-type LoginResponse struct {
-	Token string `json:"token"`
+type Request struct {
+	Pattern string `json:"pattern"`
+	Server  string `json:"server"`
+	Context string `json:"context"`
 }
 
-func (c *Client) Login(username, password string) (string, error) {
+func (c *Client) CheckToken(data Request, token string) ([]byte, error) {
 	// 构建登录请求的URL
-	loginURL := fmt.Sprintf("%s/login", c.baseURL)
-
-	// 构建请求体
-	requestBody := struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}{
-		Username: username,
-		Password: password,
-	}
+	loginURL := fmt.Sprintf("%s/oauth/", c.baseURL)
 
 	// 序列化请求体
-	requestBodyBytes, err := json.Marshal(requestBody)
+	requestBodyBytes, err := json.Marshal(data)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// 发送POST请求
-	resp, err := http.Post(loginURL, "application/json", bytes.NewBuffer(requestBodyBytes))
+	req, err := http.NewRequest(
+		"POST",
+		loginURL,
+		bytes.NewBuffer(requestBodyBytes),
+	)
 	if err != nil {
-		return "", err
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", token)
+
+	client := http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	// 解析响应
-	var loginResponse LoginResponse
-	if err := json.NewDecoder(resp.Body).Decode(&loginResponse); err != nil {
-		return "", err
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
 	}
 
-	return loginResponse.Token, nil
+	return body, nil
 }
