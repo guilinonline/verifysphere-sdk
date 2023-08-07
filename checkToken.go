@@ -3,9 +3,7 @@ package verifysphere_sdk
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io"
 	"net/http"
 )
 
@@ -15,14 +13,15 @@ type Request struct {
 	Context string `json:"context"`
 }
 
-func (c *Client) CheckToken(data Request, token string) (resp_data []byte, http_code int, err error) {
+func (c *Client) CheckToken(data Request, token string) (Flag bool, err error) {
 	// 构建登录请求的URL
+	Flag = false
 	loginURL := fmt.Sprintf("%s/oauth/", c.baseURL)
 
 	// 序列化请求体
 	requestBodyBytes, err := json.Marshal(data)
 	if err != nil {
-		return nil, 0, err
+		return Flag, err
 	}
 
 	// 发送POST请求
@@ -32,7 +31,7 @@ func (c *Client) CheckToken(data Request, token string) (resp_data []byte, http_
 		bytes.NewBuffer(requestBodyBytes),
 	)
 	if err != nil {
-		return nil, 0, err
+		return Flag, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -41,17 +40,16 @@ func (c *Client) CheckToken(data Request, token string) (resp_data []byte, http_
 	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, resp.StatusCode, err
+		return Flag, err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != 200 && resp.StatusCode != 403 {
-		return nil, resp.StatusCode, errors.New(fmt.Sprintf("鉴权服务异常，接口状态码为：%d", resp.StatusCode))
-	}
-	// 解析响应
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, resp.StatusCode, err
+	if resp.StatusCode == 200 {
+		Flag = true
+	} else if resp.StatusCode == 403 {
+		Flag = false
+	} else {
+		return Flag, fmt.Errorf("鉴权服务异常，接口状态码为：%d", resp.StatusCode)
 	}
 
-	return body, resp.StatusCode, nil
+	return Flag, nil
 }
