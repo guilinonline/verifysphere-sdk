@@ -15,9 +15,9 @@ type Request struct {
 	Context string `json:"context"`
 }
 type UserInfo struct {
-	Code    int        `json:"code"`
-	Data    []UserData `json:"data"`
-	Message string     `json:"message"`
+	Code int        `json:"code"`
+	Data []UserData `json:"data"`
+	Msg  string     `json:"msg"`
 }
 
 type UserData struct {
@@ -102,8 +102,8 @@ func (c *Client) GetUserInfo(token string) (UserInfo, error) {
 		return userinfo, err
 	}
 	if resp.StatusCode != 200 && resp.StatusCode != 403 {
-		return userinfo, errors.New(fmt.Sprintf("HTTP状态异常,状态码%s,返回信息：%s",
-			resp.StatusCode, userinfo.Message,
+		return userinfo, errors.New(fmt.Sprintf("HTTP状态异常,状态码%d,返回信息：%s",
+			resp.StatusCode, userinfo.Msg,
 		))
 	}
 
@@ -112,8 +112,8 @@ func (c *Client) GetUserInfo(token string) (UserInfo, error) {
 		return userinfo, err
 	}
 	if userinfo.Code != 0 {
-		return userinfo, errors.New(fmt.Sprintf("数据异常,状态码%s,返回信息：%s,返回Code：%d",
-			resp.StatusCode, userinfo.Message, userinfo.Code,
+		return userinfo, errors.New(fmt.Sprintf("数据异常,状态码%d,返回信息：%s,返回Code：%d",
+			resp.StatusCode, userinfo.Msg, userinfo.Code,
 		))
 	}
 	return userinfo, nil
