@@ -96,12 +96,14 @@ func (c *Client) GetUserInfo(token string) (UserInfo, error) {
 		return userinfo, err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != 200 && resp.StatusCode != 403 {
-		return userinfo, errors.New("HTTP状态异常")
-	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return userinfo, err
+	}
+	if resp.StatusCode != 200 && resp.StatusCode != 403 {
+		return userinfo, errors.New(fmt.Sprintf("HTTP状态异常,状态码%s,返回信息：%s",
+			resp.StatusCode, string(body),
+		))
 	}
 
 	err = json.Unmarshal(body, &userinfo)
