@@ -96,7 +96,7 @@ func (c *Client) GetUserInfo(token string) (UserInfo, error) {
 		return userinfo, err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != 200 && resp.StatusCode != 403 {
 		return userinfo, errors.New("HTTP状态异常")
 	}
 	body, err := io.ReadAll(resp.Body)

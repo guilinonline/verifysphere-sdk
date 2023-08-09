@@ -38,7 +38,7 @@ func TestLogin(t *testing.T) {
 func TestUserinfo(t *testing.T) {
 	baseURL := "http://172.25.162.56:9090/api/v1"
 	client := verifysphere_sdk.NewClient(baseURL)
-	token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJ1LTYyNzYyNjZiYzAxODAiLCJVc2VybmFtZSI6Imt0eHgwMDI3IiwiVXNlclR5cGUiOiJsZGFwIiwiQXVkaWVuY2UiOiJWZXJpZnlTcGhlcmUiLCJpc3MiOiJWZXJpZnlTcGhlcmUiLCJzdWIiOiJrdHh4MDAyNyIsImV4cCI6MTY5MTU5NjQ1NSwibmJmIjoxNjkxNTY3NjU1LCJpYXQiOjE2OTE1Njc2NTV9.gN30wBvYm_OsEswOh381wpA7yDzCW0fcIIUEeGvoFEI"
+	token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVSUQiOiJ1LTYyNzYyNjZiYzAxODAiLCJVc2VybmFtZSI6Imt0eHgwMDI3IiwiVXNlclR5cGUiOiJsZGFwIiwiQXVkaWVuY2UiOiJWZXJpZnlTcGhlcmUiLCJpc3MiOiJWZXJpZnlTcGhlcmUiLCJzdWIiOiJrdHh4MDAyNyIsImV4cCI6MTY5MTU5NzMzMiwibmJmIjoxNjkxNTY4NTMyLCJpYXQiOjE2OTE1Njg1MzJ9.s-UPfiYAD6dijhks_pLEjbx8nN5X4V5bpPbyHlpBn30"
 
 	data, err := client.GetUserInfo(token)
 	if err != nil {
