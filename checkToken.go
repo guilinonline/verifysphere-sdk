@@ -147,3 +147,30 @@ func (c *Client) Logout(token string) (bool, error) {
 
 	return true, nil
 }
+
+func (c *Client) Ping(token string) (bool, error) {
+	url := fmt.Sprintf("%s/self/ping/", c.baseURL)
+	req, err := http.NewRequest(
+		"GET",
+		url,
+		nil,
+	)
+	if err != nil {
+		return false, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", token)
+
+	client := http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return false, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		return false, errors.New("HTTP状态异常")
+	}
+
+	return true, nil
+}
